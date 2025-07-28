@@ -1,45 +1,31 @@
-export type ApiListResponse<Type> = {
-  total: number,
-  items: Type[]
-};
-
-export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
-
 export class Api {
-  readonly baseUrl: string;
-  protected options: RequestInit;
+  constructor(private baseUrl: string) {}
 
-  constructor(baseUrl: string, options: RequestInit = {}) {
-    this.baseUrl = baseUrl;
-    this.options = {
+  private async request<T>(url: string, options?: RequestInit): Promise<T> {
+    const res = await fetch(this.baseUrl + url, options);
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || `Ошибка: ${res.status}`);
+    }
+    return res.json() as Promise<T>;
+  }
+
+  get<T>(url: string): Promise<T> {
+    return this.request<T>(url, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        ...(options.headers as object ?? {})
-      }
-    };
+      },
+    });
   }
 
-  protected async handleResponse<T>(response: Response): Promise<T> {
-    if (response.ok) {
-      return response.json();
-    } else {
-      const data = await response.json().catch(() => ({}));
-      throw new Error(data.error ?? response.statusText ?? `Ошибка: ${response.status}`);
-    }
-  }
-
-  get<T>(uri: string): Promise<T> {
-    return fetch(this.baseUrl + uri, {
-      ...this.options,
-      method: 'GET',
-    }).then(this.handleResponse);
-  }
-
-  post<T>(uri: string, data: object, method: ApiPostMethods = 'POST'): Promise<T> {
-    return fetch(this.baseUrl + uri, {
-      ...this.options,
-      method,
-      body: JSON.stringify(data),
-    }).then(this.handleResponse);
+  post<T>(url: string, body: any): Promise<T> {
+    return this.request<T>(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
   }
 }
