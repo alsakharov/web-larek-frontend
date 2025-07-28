@@ -1,96 +1,75 @@
-// Generated using webpack-cli https://github.com/webpack/webpack-cli
-
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const { DefinePlugin } = require('webpack');
-const TerserPlugin = require("terser-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 
-require('dotenv').config({
-  path: path.join(process.cwd(), process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env')
-});
+const isProduction = process.env.NODE_ENV === "production";
 
-const isProduction = process.env.NODE_ENV == "production";
-
-const stylesHandler = MiniCssExtractPlugin.loader;
-
-const config = {
-  entry: "./src/index.ts",
-  devtool: "source-map",
+module.exports = {
+  mode: isProduction ? "production" : "development",
+  entry: "./src/index.ts",  // <-- изменил на index.ts
   output: {
     path: path.resolve(__dirname, "dist"),
+    filename: "bundle.js",
+    clean: true,
   },
-  devServer: {
-    open: true,
-    host: "localhost",
-    watchFiles: ["src/pages/*.html"],
-    hot: true
+  resolve: {
+    extensions: [".tsx", ".ts", ".js"], // чтобы импорт работал без расширений
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: "src/pages/index.html"
-    }),
-
-    new MiniCssExtractPlugin(),
-
-    // Add your plugins here
-    // Learn more about plugins from https://webpack.js.org/configuration/plugins/
-    new DefinePlugin({
-      'process.env.DEVELOPMENT': !isProduction,
-      'process.env.API_ORIGIN': JSON.stringify(process.env.API_ORIGIN ?? '')
-    })
-  ],
   module: {
     rules: [
       {
-        test: /\.(ts|tsx)$/i,
-        use: ["babel-loader", "ts-loader"],
-        exclude: ["/node_modules/"],
+        test: /\.tsx?$/,  // обработка ts и tsx
+        use: [
+          "babel-loader",
+          "ts-loader"
+        ],
+        exclude: /node_modules/,
       },
       {
         test: /\.s[ac]ss$/i,
-        use: [stylesHandler, "css-loader", "postcss-loader", "resolve-url-loader", {
-          loader: "sass-loader",
-          options: {
-            sourceMap: true,
-            sassOptions: {
-              includePaths: ["src/scss"]
-            }
-          }
-        }],
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "postcss-loader",
+          "resolve-url-loader",
+          {
+            loader: "sass-loader",
+            options: {
+              sourceMap: true,
+              sassOptions: {
+                includePaths: ["src/scss"]
+              },
+            },
+          },
+        ],
       },
       {
         test: /\.css$/i,
-        use: [stylesHandler, "css-loader", "postcss-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
       },
       {
         test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
         type: "asset",
       },
-
-      // Add your rules for custom modules here
-      // Learn more about loaders from https://webpack.js.org/loaders/
     ],
   },
-  resolve: {
-    extensions: [".tsx", ".ts", ".jsx", ".js", "..."],
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: "src/pages/index.html",
+    }),
+    new MiniCssExtractPlugin(),
+    new Dotenv(),
+  ],
+  devtool: isProduction ? false : "source-map",
+  devServer: {
+    static: path.resolve(__dirname, "dist"),
+    compress: true,
+    port: 3000,
+    open: true,
+    hot: true,
+    client: {
+      overlay: true,
+    },
   },
-  optimization: {
-    minimize: true,
-    minimizer: [new TerserPlugin({
-      terserOptions: {
-        keep_classnames: true,
-        keep_fnames: true
-      }
-    })]
-  }
-};
-
-module.exports = () => {
-  if (isProduction) {
-    config.mode = "production";
-  } else {
-    config.mode = "development";
-  }
-  return config;
 };
