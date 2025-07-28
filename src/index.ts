@@ -39,7 +39,7 @@ function renderFilms(films: Film[]) {
     const img = card.querySelector('.card__image') as HTMLImageElement;
     const priceSpan = card.querySelector('.card__price');
 
-    if (categorySpan) categorySpan.textContent = film.tags[0] || 'Без категории';
+    if (categorySpan) categorySpan.textContent = film.tags?.[0] || 'Без категории';
     if (titleH2) titleH2.textContent = film.title;
     if (img) img.src = film.cover.startsWith('http') ? film.cover : API_BASE_URL + film.cover;
     if (priceSpan) priceSpan.textContent = `${film.rating} рейтинг`;
@@ -99,9 +99,9 @@ function openFilmModal(filmId: string) {
     <div class="card card_full">
       <img class="card__image" src="${imageSrc}" alt="${film.title}" />
       <div class="card__column">
-        <span class="card__category card__category_other">${film.tags.join(', ')}</span>
+        <span class="card__category card__category_other">${film.tags?.join(', ') || ''}</span>
         <h2 class="card__title">${film.title}</h2>
-        <p class="card__text">${film.description || film.about}</p>
+        <p class="card__text">${film.description || film.about || ''}</p>
         <div class="card__row">
           <button class="button card__button" id="add-to-cart">В корзину</button>
           <span class="card__price">${film.rating} рейтинг</span>
