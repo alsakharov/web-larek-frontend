@@ -1,31 +1,48 @@
-export class Api {
-  constructor(private baseUrl: string) {}
+import { OrderData } from '../../models/order';
+import { Product } from '../../types';
 
-  private async request<T>(url: string, options?: RequestInit): Promise<T> {
-    const res = await fetch(this.baseUrl + url, options);
+export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
+
+export class Api {
+  private baseUrl: string;
+  private defaultOptions: RequestInit;
+
+  constructor(baseUrl: string, defaultOptions: RequestInit = {}) {
+    this.baseUrl = baseUrl;
+    this.defaultOptions = defaultOptions;
+  }
+
+  private async request<T>(url: string, options: RequestInit = {}): Promise<T> {
+    const res = await fetch(this.baseUrl + url, {
+      ...this.defaultOptions,
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(this.defaultOptions.headers as object),
+        ...(options.headers as object),
+      },
+    });
+
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
       throw new Error(errorData.error || `Ошибка: ${res.status}`);
     }
+
     return res.json() as Promise<T>;
   }
 
   get<T>(url: string): Promise<T> {
+    return this.request<T>(url, { method: 'GET' });
+  }
+
+  post<T>(url: string, body: object, method: ApiPostMethods = 'POST'): Promise<T> {
     return this.request<T>(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      method,
+      body: JSON.stringify(body),
     });
   }
 
-  post<T>(url: string, body: any): Promise<T> {
-    return this.request<T>(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
+  async sendOrder(order: OrderData, items: Product[]): Promise<{ success: boolean }> {
+    return this.post<{ success: boolean }>('/order', { order, items }, 'POST');
   }
 }

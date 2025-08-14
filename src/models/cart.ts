@@ -1,13 +1,13 @@
-import { Film } from '../types';
+import { Product } from '../types';
 
 export class Cart {
-  private items: Film[] = [];
+  private items: Product[] = [];
 
-  getItems(): Film[] {
+  getItems(): Product[] {
     return [...this.items]; // возвращаем копию
   }
 
-  addItem(item: Film) {
+  addItem(item: Product) {
     if (!this.items.find(f => f.id === item.id)) {
       this.items.push(item);
     }
@@ -17,9 +17,10 @@ export class Cart {
     this.items = this.items.filter(item => item.id !== itemId);
   }
 
-  getTotal(): number {
-    return this.items.reduce((sum, item) => sum + item.rating, 0); // цена = rating (для примера)
-  }
+getTotal(): number {
+  return this.items.reduce((sum, item) => sum + item.price, 0);
+}
+
 
   getCount(): number {
     return this.items.length;

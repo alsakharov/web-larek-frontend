@@ -1,32 +1,19 @@
-export interface Film {
+export interface Product {
   id: string;
-  rating: number;
-  director: string;
-  tags: string[];
   title: string;
-  about: string;
   description: string;
   image: string;
-  cover: string;
+  category?: string;
+  price: number;
 }
 
-export interface FilmsResponse {
+export interface ProductListResponse {
   total: number;
-  items: Film[];
+  items: Product[];
 }
 
-export interface Shedule {
-  daytime: string; // ISO date-time string
-  hall: string;
-  rows: number;
-  seats: number;
-  price: number;
-}
-
-export interface Ticket {
-  film: string; // uuid
-  daytime: string; // ISO date-time string
-  row: number;
-  seat: number;
-  price: number;
+export interface OrderResponse {
+  success: boolean;
+  orderId?: string;
+  error?: string;
 }
