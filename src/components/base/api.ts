@@ -1,3 +1,4 @@
+import { ProductListResponse, OrderResponse } from '../../types';
 import { OrderData } from '../../models/order';
 import { Product } from '../../types';
 
@@ -42,7 +43,7 @@ export class Api {
     });
   }
 
-  async sendOrder(order: OrderData, items: Product[]): Promise<{ success: boolean }> {
-    return this.post<{ success: boolean }>('/order', { order, items }, 'POST');
+  async sendOrder(order: OrderData, items: Product[]): Promise<OrderResponse> {
+    return this.post<OrderResponse>('/order', { order, items }, 'POST');
   }
 }

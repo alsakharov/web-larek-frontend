@@ -16,12 +16,12 @@ export class Catalog {
   constructor(protected api: Api) {}
 
   async getProducts(): Promise<Product[]> {
-    const response = await this.api.get<ProductListResponse>('/products');
+    const response = await this.api.get<ProductListResponse>('/');
     return response.items;
   }
 
   async getProduct(id: string): Promise<Product> {
-    return this.api.get<Product>(`/products/${id}`);
+    return this.api.get<Product>(`/${id}`);
   }
 
   async orderItems(order: OrderRequest): Promise<OrderResponse> {

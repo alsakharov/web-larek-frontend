@@ -6,10 +6,11 @@ import { ModalView } from './components/ModalView';
 import { Cart } from './models/cart';
 import { Order, OrderData } from './models/order';
 import { ErrorView } from './components/ErrorView';
+import { API_URL, CDN_URL } from './utils/constants';
 
-const API_BASE_URL = 'https://larek-api.nomoreparties.co';
+// const API_BASE_URL = 'https://larek-api.nomoreparties.co';
 
-const api = new Api(API_BASE_URL);
+const api = new Api(CDN_URL);
 const catalog = new Catalog(api);
 
 const gallery = document.querySelector('.gallery') as HTMLElement;
@@ -53,7 +54,7 @@ function renderProducts(products: Product[]) {
 
     if (categorySpan) categorySpan.textContent = product.category || 'Без категории';
     if (titleH2) titleH2.textContent = product.title;
-    if (img) img.src = product.image.startsWith('http') ? product.image : API_BASE_URL + product.image;
+    if (img) img.src = product.image.startsWith('http') ? product.image : `${CDN_URL}/${product.image}`;
     if (priceSpan) priceSpan.textContent = `${product.price} ₽`;
 
     card.addEventListener('click', () => openProductModal(product.id));
@@ -101,7 +102,7 @@ function openProductModal(productId: string) {
   const product = products.find(p => p.id === productId);
   if (!product) return;
 
-  const imageSrc = product.image.startsWith('http') ? product.image : API_BASE_URL + product.image;
+  const imageSrc = product.image.startsWith('http') ? product.image : `${CDN_URL}/${product.image}`;
 
   productModal.setContent(`
     <div class="card card_full">
