@@ -1,20 +1,32 @@
-import { ProductListResponse, OrderResponse } from '../../types';
+// --- Импорт типов ---
+import { Product, ProductListResponse, OrderResponse } from '../../types';
 import { OrderData } from '../../models/order';
-import { Product } from '../../types';
 
+// --- Типы для методов POST ---
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
+// --- Класс для работы с API и CDN ---
 export class Api {
-  private baseUrl: string;
+  // --- Публичные свойства для CDN и API адресов ---
+  public cdnUrl: string;
+  public apiUrl: string;
   private defaultOptions: RequestInit;
 
-  constructor(baseUrl: string, defaultOptions: RequestInit = {}) {
-    this.baseUrl = baseUrl;
+  // --- Конструктор: принимает CDN, API и опции запроса ---
+  constructor(cdnUrl: string, apiUrl: string, defaultOptions: RequestInit = {}) {
+    this.cdnUrl = cdnUrl;
+    this.apiUrl = apiUrl;
     this.defaultOptions = defaultOptions;
   }
 
+  // --- Получить адрес CDN ---
+  getCdnUrl(): string {
+    return this.cdnUrl;
+  }
+
+  // --- Универсальный приватный метод для HTTP-запросов ---
   private async request<T>(url: string, options: RequestInit = {}): Promise<T> {
-    const res = await fetch(this.baseUrl + url, {
+    const res = await fetch(this.apiUrl + url, {
       ...this.defaultOptions,
       ...options,
       headers: {
@@ -32,10 +44,12 @@ export class Api {
     return res.json() as Promise<T>;
   }
 
+  // --- Метод для GET-запросов ---
   get<T>(url: string): Promise<T> {
     return this.request<T>(url, { method: 'GET' });
   }
 
+  // --- Метод для POST/PUT/DELETE-запросов ---
   post<T>(url: string, body: object, method: ApiPostMethods = 'POST'): Promise<T> {
     return this.request<T>(url, {
       method,
@@ -43,6 +57,13 @@ export class Api {
     });
   }
 
+  // --- Получить список товаров как массив ---
+  async getProducts(): Promise<Product[]> {
+  const response = await this.get<ProductListResponse>('/product');
+  return response.items; // теперь вернётся массив товаров
+}
+
+  // --- Отправить заказ ---
   async sendOrder(order: OrderData, items: Product[]): Promise<OrderResponse> {
     return this.post<OrderResponse>('/order', { order, items }, 'POST');
   }
