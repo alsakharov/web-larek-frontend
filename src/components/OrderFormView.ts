@@ -6,19 +6,19 @@ import { Api } from './base/api';
 import { OrderResponse } from '../types';
 
 export class OrderFormView {
-  constructor(
-    private formModel: FormModel,
-    private cart: Cart,
-    private api: Api,
-    private orderModal: ModalView,
-    private contactModal: ModalView,
-    private successModal: ModalView,
-    private errorView: ErrorView,
-    private cartView: { updateCounter: () => void; render: () => void }
-  ) {}
+	constructor(
+		private formModel: FormModel,
+		private cart: Cart,
+		private api: Api,
+		private orderModal: ModalView,
+		private contactModal: ModalView,
+		private successModal: ModalView,
+		private errorView: ErrorView,
+		private cartView: { updateCounter: () => void; render: () => void }
+	) {}
 
-  openOrderStep1() {
-    this.orderModal.setContent(`
+	openOrderStep1() {
+		this.orderModal.setContent(`
       <div class="modal__container">
         <form id="order-form" class="order">
           <button class="modal__close" aria-label="закрыть" type="button"></button>
@@ -41,60 +41,73 @@ export class OrderFormView {
       </div>
     `);
 
-    document.body.classList.add('page_fixed');
-    this.orderModal.open();
+		document.body.classList.add('page_fixed');
+		this.orderModal.open();
 
-    const paymentBtns = Array.from(this.orderModal.getElement().querySelectorAll('.order__payment-btn')) as HTMLButtonElement[];
-    const addressInput = this.orderModal.getElement().querySelector('#delivery-address') as HTMLInputElement;
-    addressInput.value = this.formModel.address || '';
-    const nextStepBtn = this.orderModal.getElement().querySelector('#next-step') as HTMLButtonElement;
-    const errorSpan = this.orderModal.getElement().querySelector('#order-step1-error') as HTMLSpanElement;
-    let selectedPayment = this.formModel.payment || '';
+		const paymentBtns = Array.from(
+			this.orderModal.getElement().querySelectorAll('.order__payment-btn')
+		) as HTMLButtonElement[];
+		const addressInput = this.orderModal
+			.getElement()
+			.querySelector('#delivery-address') as HTMLInputElement;
+		addressInput.value = this.formModel.address || '';
+		const nextStepBtn = this.orderModal
+			.getElement()
+			.querySelector('#next-step') as HTMLButtonElement;
+		const errorSpan = this.orderModal
+			.getElement()
+			.querySelector('#order-step1-error') as HTMLSpanElement;
+		let selectedPayment = this.formModel.payment || '';
 
-    const validateStep1 = () => {
-      this.formModel.setPayment(selectedPayment);
-      this.formModel.setOrderAddress(addressInput.value.trim());
-      const errors = this.formModel.formErrors;
-      errorSpan.textContent = errors.payment || errors.address || '';
-      nextStepBtn.disabled = !!errorSpan.textContent;
-    };
+		const validateStep1 = () => {
+			this.formModel.setPayment(selectedPayment);
+			this.formModel.setOrderAddress(addressInput.value.trim());
+			const errors = this.formModel.formErrors;
+			errorSpan.textContent = errors.payment || errors.address || '';
+			nextStepBtn.disabled = !!errorSpan.textContent;
+		};
 
-    if (this.formModel.payment) {
-      paymentBtns.forEach(btn => {
-        if (btn.dataset.type === this.formModel.payment) {
-          btn.classList.add('order__payment-btn_active');
-          selectedPayment = this.formModel.payment;
-        }
-      });
-      validateStep1();
-    }
+		if (this.formModel.payment) {
+			paymentBtns.forEach((btn) => {
+				if (btn.dataset.type === this.formModel.payment) {
+					btn.classList.add('order__payment-btn_active');
+					selectedPayment = this.formModel.payment;
+				}
+			});
+			validateStep1();
+		}
 
-    paymentBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        paymentBtns.forEach(b => b.classList.remove('order__payment-btn_active'));
-        btn.classList.add('order__payment-btn_active');
-        selectedPayment = btn.dataset.type || '';
-        this.formModel.setPayment(selectedPayment);
-        validateStep1();
-      });
-    });
+		paymentBtns.forEach((btn) => {
+			btn.addEventListener('click', () => {
+				paymentBtns.forEach((b) =>
+					b.classList.remove('order__payment-btn_active')
+				);
+				btn.classList.add('order__payment-btn_active');
+				selectedPayment = btn.dataset.type || '';
+				this.formModel.setPayment(selectedPayment);
+				validateStep1();
+			});
+		});
 
-    addressInput.addEventListener('input', () => {
-      this.formModel.setOrderAddress(addressInput.value.trim());
-      validateStep1();
-    });
+		addressInput.addEventListener('input', () => {
+			this.formModel.setOrderAddress(addressInput.value.trim());
+			validateStep1();
+		});
 
-    this.orderModal.getElement().querySelector('#order-form')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (nextStepBtn.disabled) return;
-      this.orderModal.close();
-      document.body.classList.remove('page_fixed');
-      this.openOrderStep2(selectedPayment, addressInput.value.trim());
-    });
-  }
+		this.orderModal
+			.getElement()
+			.querySelector('#order-form')
+			?.addEventListener('submit', (e) => {
+				e.preventDefault();
+				if (nextStepBtn.disabled) return;
+				this.orderModal.close();
+				document.body.classList.remove('page_fixed');
+				this.openOrderStep2(selectedPayment, addressInput.value.trim());
+			});
+	}
 
-  openOrderStep2(selectedPayment: string, address: string) {
-    this.contactModal.setContent(`
+	openOrderStep2(selectedPayment: string, address: string) {
+		this.contactModal.setContent(`
       <div class="modal__container">
         <form id="contact-form" class="order">
           <button class="modal__close" aria-label="закрыть" type="button"></button>
@@ -118,83 +131,97 @@ export class OrderFormView {
       </div>
     `);
 
-    document.body.classList.add('page_fixed');
-    this.contactModal.open();
+		document.body.classList.add('page_fixed');
+		this.contactModal.open();
 
-    const emailInput = this.contactModal.getElement().querySelector('#contact-email') as HTMLInputElement;
-    const phoneInput = this.contactModal.getElement().querySelector('#contact-phone') as HTMLInputElement;
-    emailInput.value = this.formModel.email || '';
-    phoneInput.value = this.formModel.phone || '';
-    const payBtn = this.contactModal.getElement().querySelector('#pay-btn') as HTMLButtonElement;
-    const errorSpan2 = this.contactModal.getElement().querySelector('#order-step2-error') as HTMLSpanElement;
+		const emailInput = this.contactModal
+			.getElement()
+			.querySelector('#contact-email') as HTMLInputElement;
+		const phoneInput = this.contactModal
+			.getElement()
+			.querySelector('#contact-phone') as HTMLInputElement;
+		emailInput.value = this.formModel.email || '';
+		phoneInput.value = this.formModel.phone || '';
+		const payBtn = this.contactModal
+			.getElement()
+			.querySelector('#pay-btn') as HTMLButtonElement;
+		const errorSpan2 = this.contactModal
+			.getElement()
+			.querySelector('#order-step2-error') as HTMLSpanElement;
 
-    const validateStep2 = () => {
-      this.formModel.setEmail(emailInput.value);
-      this.formModel.setPhone(phoneInput.value);
-      const errors = this.formModel.formErrors;
-      errorSpan2.textContent = errors.email || errors.phone || '';
-      payBtn.disabled = !!errorSpan2.textContent;
-    };
+		const validateStep2 = () => {
+			this.formModel.setEmail(emailInput.value);
+			this.formModel.setPhone(phoneInput.value);
+			const errors = this.formModel.formErrors;
+			errorSpan2.textContent = errors.email || errors.phone || '';
+			payBtn.disabled = !!errorSpan2.textContent;
+		};
 
-    validateStep2();
+		validateStep2();
 
-    emailInput.addEventListener('input', () => {
-      this.formModel.setEmail(emailInput.value);
-      validateStep2();
-    });
+		emailInput.addEventListener('input', () => {
+			this.formModel.setEmail(emailInput.value);
+			validateStep2();
+		});
 
-    phoneInput.addEventListener('input', () => {
-      let value = phoneInput.value.replace(/\D/g, '');
-      let formatted = '+';
+		phoneInput.addEventListener('input', () => {
+			let value = phoneInput.value.replace(/\D/g, '');
+			let formatted = '+';
 
-      if (value.length > 0) formatted += value[0];
-      if (value.length > 1) formatted += ' (' + value.slice(1, 4);
-      if (value.length >= 4) formatted += ') ' + value.slice(4, 7);
-      if (value.length >= 7) formatted += '-' + value.slice(7, 9);
-      if (value.length >= 9) formatted += '-' + value.slice(9, 11);
+			if (value.length > 0) formatted += value[0];
+			if (value.length > 1) formatted += ' (' + value.slice(1, 4);
+			if (value.length >= 4) formatted += ') ' + value.slice(4, 7);
+			if (value.length >= 7) formatted += '-' + value.slice(7, 9);
+			if (value.length >= 9) formatted += '-' + value.slice(9, 11);
 
-      phoneInput.value = formatted;
-      this.formModel.setPhone(phoneInput.value);
-      validateStep2();
-    });
+			phoneInput.value = formatted;
+			this.formModel.setPhone(phoneInput.value);
+			validateStep2();
+		});
 
-    this.contactModal.getElement().querySelector('#contact-form')?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (payBtn.disabled) return;
+		this.contactModal
+			.getElement()
+			.querySelector('#contact-form')
+			?.addEventListener('submit', async (e) => {
+				e.preventDefault();
+				if (payBtn.disabled) return;
 
-      const orderData = {
-        payment: selectedPayment,
-        address: address,
-        email: this.formModel.email,
-        phone: this.formModel.phone,
-        total: this.cart.getTotal()
-      };
+				const orderData = {
+					payment: selectedPayment,
+					address: address,
+					email: this.formModel.email,
+					phone: this.formModel.phone,
+					total: this.cart.getTotal(),
+				};
 
-      const items = this.cart.getItems().map(item => ({
-        productId: item.id,
-        quantity: 1
-      }));
+				const items = this.cart.getItems().map((item) => ({
+					productId: item.id,
+					quantity: 1,
+				}));
 
-      try {
-        const response: OrderResponse = await this.api.sendOrder(orderData, items);
-        if (response.id) {
-          this.cart.clear();
-          this.cartView.updateCounter();
-          this.cartView.render();
-          this.contactModal.close();
-          document.body.classList.remove('page_fixed');
-          this.openOrderSuccess();
-        } else {
-          this.showError(response.error || 'Ошибка при оформлении заказа');
-        }
-      } catch (err) {
-        this.showError('Ошибка при оформлении заказа');
-      }
-    });
-  }
+				try {
+					const response: OrderResponse = await this.api.sendOrder(
+						orderData,
+						items
+					);
+					if (response.id) {
+						this.cart.clear();
+						this.cartView.updateCounter();
+						this.cartView.render();
+						this.contactModal.close();
+						document.body.classList.remove('page_fixed');
+						this.openOrderSuccess();
+					} else {
+						this.showError(response.error || 'Ошибка при оформлении заказа');
+					}
+				} catch (err) {
+					this.showError('Ошибка при оформлении заказа');
+				}
+			});
+	}
 
-  openOrderSuccess() {
-    this.successModal.setContent(`
+	openOrderSuccess() {
+		this.successModal.setContent(`
       <div class="modal__container">
         <div class="order-success">
           <button class="modal__close" aria-label="закрыть" type="button"></button>
@@ -206,19 +233,22 @@ export class OrderFormView {
       </div>
     `);
 
-    document.body.classList.add('page_fixed');
-    this.successModal.open();
+		document.body.classList.add('page_fixed');
+		this.successModal.open();
 
-    this.successModal.getElement().querySelector('#success-ok')?.addEventListener('click', () => {
-      this.successModal.close();
-      document.body.classList.remove('page_fixed');
-      this.formModel.clear();
-    });
-  }
+		this.successModal
+			.getElement()
+			.querySelector('#success-ok')
+			?.addEventListener('click', () => {
+				this.successModal.close();
+				document.body.classList.remove('page_fixed');
+				this.formModel.clear();
+			});
+	}
 
-  showError(message: string) {
-    this.errorView.showError(message);
-    this.errorView.show();
-    document.body.classList.add('page_fixed');
-  }
+	showError(message: string) {
+		this.errorView.showError(message);
+		this.errorView.show();
+		document.body.classList.add('page_fixed');
+	}
 }

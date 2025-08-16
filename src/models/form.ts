@@ -1,90 +1,90 @@
 import { FormErrors } from '../types';
 
 export class FormModel {
-  payment = '';
-  email = '';
-  phone = '';
-  address = '';
-  total = 0;
-  items: string[] = [];
-  formErrors: FormErrors = {};
-  
-  setOrderAddress(value: string) {
-    this.address = value;
-    this.validateOrder();
-  }
+	payment = '';
+	email = '';
+	phone = '';
+	address = '';
+	total = 0;
+	items: string[] = [];
+	formErrors: FormErrors = {};
 
-  setPayment(value: string) {
-    this.payment = value;
-    this.validateOrder();
-  }
+	setOrderAddress(value: string) {
+		this.address = value;
+		this.validateOrder();
+	}
 
-  validateOrder() {
-    const regexp = /^[а-яА-ЯёЁa-zA-Z0-9\s\/.,-]{7,}$/;
-    const errors: FormErrors = {};
+	setPayment(value: string) {
+		this.payment = value;
+		this.validateOrder();
+	}
 
-    if (!this.address) {
-      errors.address = 'Необходимо указать адрес';
-    } else if (!regexp.test(this.address)) {
-      errors.address = 'Укажите настоящий адрес';
-    }
-    if (!this.payment) {
-      errors.payment = 'Выберите способ оплаты';
-    }
+	validateOrder() {
+		const regexp = /^[а-яА-ЯёЁa-zA-Z0-9\s\/.,-]{7,}$/;
+		const errors: FormErrors = {};
 
-    this.formErrors = errors;
-    return Object.keys(errors).length === 0;
-  }
+		if (!this.address) {
+			errors.address = 'Необходимо указать адрес';
+		} else if (!regexp.test(this.address)) {
+			errors.address = 'Укажите настоящий адрес';
+		}
+		if (!this.payment) {
+			errors.payment = 'Выберите способ оплаты';
+		}
 
-  setEmail(value: string) {
-    this.email = value;
-    this.validateContacts();
-  }
+		this.formErrors = errors;
+		return Object.keys(errors).length === 0;
+	}
 
-  setPhone(value: string) {
-    this.phone = value;
-    this.validateContacts();
-  }
+	setEmail(value: string) {
+		this.email = value;
+		this.validateContacts();
+	}
 
-  validateContacts() {
-    const regexpEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    const regexpPhone = /^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{10}$/;
-    const errors: FormErrors = {};
+	setPhone(value: string) {
+		this.phone = value;
+		this.validateContacts();
+	}
 
-    if (!this.email) {
-      errors.email = 'Необходимо указать email';
-    } else if (!regexpEmail.test(this.email)) {
-      errors.email = 'Некорректный адрес электронной почты';
-    }
+	validateContacts() {
+		const regexpEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+		const regexpPhone = /^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{10}$/;
+		const errors: FormErrors = {};
 
-    if (this.phone.startsWith('8')) {
-      this.phone = '+7' + this.phone.slice(1);
-    }
+		if (!this.email) {
+			errors.email = 'Необходимо указать email';
+		} else if (!regexpEmail.test(this.email)) {
+			errors.email = 'Некорректный адрес электронной почты';
+		}
 
-    if (!this.phone) {
-      errors.phone = 'Необходимо указать телефон';
-    } else if (!regexpPhone.test(this.phone)) {
-      errors.phone = 'Некорректный формат номера телефона';
-    }
+		if (this.phone.startsWith('8')) {
+			this.phone = '+7' + this.phone.slice(1);
+		}
 
-    this.formErrors = errors;
-    return Object.keys(errors).length === 0;
-  }
+		if (!this.phone) {
+			errors.phone = 'Необходимо указать телефон';
+		} else if (!regexpPhone.test(this.phone)) {
+			errors.phone = 'Некорректный формат номера телефона';
+		}
 
-  getOrderLot() {
-    return {
-      payment: this.payment,
-      email: this.email,
-      phone: this.phone,
-      address: this.address,
-      total: this.total,
-      items: this.items,
-    };
-  }
-  clear() {
-  this.email = '';
-  this.phone = '';
-  this.address = '';
-  this.payment = '';
-}
+		this.formErrors = errors;
+		return Object.keys(errors).length === 0;
+	}
+
+	getOrderLot() {
+		return {
+			payment: this.payment,
+			email: this.email,
+			phone: this.phone,
+			address: this.address,
+			total: this.total,
+			items: this.items,
+		};
+	}
+	clear() {
+		this.email = '';
+		this.phone = '';
+		this.address = '';
+		this.payment = '';
+	}
 }
