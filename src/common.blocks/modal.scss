@@ -22,11 +22,11 @@
     @include mixins.flex(column);
     gap: $defaultPadding;
     background-color: $background;
-    // min-height: 90vmin;
     border-radius: 3rem;
     box-sizing: border-box;
     position: relative;
   }
+  
 
   &__content {
     flex-grow: 1;
@@ -40,8 +40,10 @@
 
   &__actions {
     @include mixins.flex(row);
+    justify-content: center;
     align-items: center;
-    gap: 2rem;
+    margin-top: 1rem;
+    gap: 1rem;
   }
 
   &__close {

@@ -4,7 +4,7 @@ export interface Product {
   description: string;
   image: string;
   category?: string;
-  price: number;
+  price: number | null;
 }
 
 export interface ProductListResponse {
@@ -13,7 +13,23 @@ export interface ProductListResponse {
 }
 
 export interface OrderResponse {
-  success: boolean;
-  orderId?: string;
+  id: string;
+  total: number;
   error?: string;
 }
+
+export interface OrderData {
+  payment: string;
+  address: string;
+  email: string;
+  phone: string;
+  total: number;
+}
+
+export type FormErrors = {
+  address?: string;
+  payment?: string;
+  email?: string;
+  phone?: string;
+};
+

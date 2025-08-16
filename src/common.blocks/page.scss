@@ -15,3 +15,9 @@ html, body.page {
 		position: fixed;
 	}
 }
+
+.page_fixed {
+    overflow: hidden;
+    position: fixed;
+    width: 100vw;
+}

@@ -16,15 +16,17 @@
 <body class="page">
   <div class="page__wrapper">
     <header class="header">
-      <div class="header__container">
-        <a class="header__logo" href="/">
-          <img class="header__logo-image" src="<%=require('../images/logo.svg')%>" alt="Film! logo" />
-        </a>
-        <button class="header__basket" id="open-basket-btn">
-          <span class="header__basket-counter">0</span>
-        </button>
-      </div>
-    </header>
+  <div class="header__container">
+    <a class="header__logo" href="/">
+      <img class="header__logo-image" src="<%=require('../images/logo.svg')%>" alt="Film! logo" />
+    </a>
+     <!-- уведомление -->
+    <span class="basket-notify" style="display:none;"></span>
+    <button class="header__basket" id="open-basket-btn">
+      <span class="header__basket-counter">0</span>
+    </button>
+  </div>
+</header>
 
     <main class="gallery"></main>
   </div>
@@ -35,27 +37,16 @@
   <div class="modal" data-modal="contact"></div>
   <div class="modal" data-modal="success"></div>
   <div class="modal" data-modal="error"></div>
-  <div class="modal" data-modal="add-to-cart">
-    <div class="modal__container">
-      <button class="modal__close" aria-label="закрыть"></button>
-      <div class="modal__content">
-        <h2 class="modal__title">Товар добавлен в корзину</h2>
-        <div class="modal__actions">
-          <button class="button" id="modal-cart-ok">ОК</button>
-        </div>
-      </div>
-    </div>
-  </div>
   <div class="modal" data-modal="basket">
     <div class="modal__container">
-      <button class="modal__close" aria-label="закрыть"></button>
+      <button class="modal__close" aria-label="закрыть" type="button"></button>
       <div class="modal__content">
         <div class="basket">
           <h2 class="modal__title">Корзина</h2>
           <ul class="basket__list"></ul>
-          <div class="modal__actions">
+          <div class="basket__actions">
             <button class="button basket__button" id="open-order-btn">Оформить</button>
-            <span class="basket__price">0 ₽</span>
+            <span class="basket__price">0 синапсов</span>
           </div>
         </div>
       </div>
@@ -68,7 +59,7 @@
       <span class="card__category card__category_soft">софт-скил</span>
       <h2 class="card__title">+1 час в сутках</h2>
       <img class="card__image" src="" alt="" />
-      <span class="card__price">750 ₽</span>
+      <span class="card__price">750 синапсов</span>
     </button>
   </template>
 
@@ -81,7 +72,7 @@
         <p class="card__text">Если планируете решать задачи в тренажёре, берите два.</p>
         <div class="card__row">
           <button class="button card__button">В корзину</button>
-          <span class="card__price">1000 ₽</span>
+          <span class="card__price">1000 синапсов</span>
         </div>
       </div>
     </div>
@@ -91,7 +82,7 @@
     <li class="basket__item card card_compact">
       <span class="basket__item-index">1</span>
       <span class="card__title">Фреймворк куки судьбы</span>
-      <span class="card__price">2500 ₽</span>
+      <span class="card__price">2500 синапсов</span>
       <button class="basket__item-delete card__button" aria-label="удалить"></button>
     </li>
   </template>
@@ -102,7 +93,7 @@
       <ul class="basket__list"></ul>
       <div class="modal__actions">
         <button class="button basket__button">Оформить</button>
-        <span class="basket__price">0 ₽</span>
+        <span class="basket__price">0 синапсов</span>
       </div>
     </div>
   </template>
@@ -124,7 +115,7 @@
       </div>
       <div class="modal__actions">
         <button type="submit" disabled class="button order__button">Далее</button>
-        <span class="form__errors"></span>
+        <span class="form__errors" id="order-step1-error"></span>
       </div>
     </form>
   </template>
@@ -143,7 +134,7 @@
       </div>
       <div class="modal__actions">
         <button type="submit" disabled class="button">Оплатить</button>
-        <span class="form__errors"></span>
+        <span class="form__errors" id="order-step2-error"></span>
       </div>
     </form>
   </template>
