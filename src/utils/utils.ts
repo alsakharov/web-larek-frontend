@@ -71,18 +71,6 @@ export function bem(
 	};
 }
 
-export function getObjectProperties(
-	obj: object,
-	filter?: (name: string, prop: PropertyDescriptor) => boolean
-): string[] {
-	return Object.entries(
-		Object.getOwnPropertyDescriptors(Object.getPrototypeOf(obj))
-	)
-		.filter(([name, prop]: [string, PropertyDescriptor]) =>
-			filter ? filter(name, prop) : name !== 'constructor'
-		)
-		.map(([name, prop]) => name);
-}
 
 /**
  * Устанавливает dataset атрибуты элемента
