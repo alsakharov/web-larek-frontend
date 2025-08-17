@@ -5,8 +5,6 @@ export class FormModel {
 	email = '';
 	phone = '';
 	address = '';
-	total = 0;
-	items: string[] = [];
 	formErrors: FormErrors = {};
 
 	setOrderAddress(value: string) {
@@ -20,20 +18,17 @@ export class FormModel {
 	}
 
 	validateOrder() {
-		const regexp = /^[а-яА-ЯёЁa-zA-Z0-9\s\/.,-]{7,}$/;
-		const errors: FormErrors = {};
+    const errors: FormErrors = {};
 
-		if (!this.address) {
-			errors.address = 'Необходимо указать адрес';
-		} else if (!regexp.test(this.address)) {
-			errors.address = 'Укажите настоящий адрес';
-		}
-		if (!this.payment) {
-			errors.payment = 'Выберите способ оплаты';
-		}
+    if (!this.address) {
+        errors.address = 'Необходимо указать адрес';
+    }
+    if (!this.payment) {
+        errors.payment = 'Выберите способ оплаты';
+    }
 
-		this.formErrors = errors;
-		return Object.keys(errors).length === 0;
+    this.formErrors = errors;
+    return Object.keys(errors).length === 0;
 	}
 
 	setEmail(value: string) {
@@ -76,9 +71,7 @@ export class FormModel {
 			payment: this.payment,
 			email: this.email,
 			phone: this.phone,
-			address: this.address,
-			total: this.total,
-			items: this.items,
+			address: this.address
 		};
 	}
 	clear() {

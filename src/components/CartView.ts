@@ -1,63 +1,84 @@
-import { Cart } from '../models/cart';
 import { Product } from '../types';
-import { ModalManager } from './base/ModalManager';
+import { ModalView } from './ModalView';
+import { BasketItemView } from './BasketItemView';
 
 export class CartView {
-	constructor(
-		private cart: Cart,
-		private basketList: HTMLElement,
-		private basketPrice: HTMLElement,
-		private basketModal: HTMLElement,
-		private basketCounter: HTMLElement,
-		private modalManager: ModalManager,
-		private showBasketNotify: (message: string) => void,
-		private openOrderStep1: () => void
-	) {}
+    private presenter!: {
+        getItems: () => Product[];
+        getTotal: () => number;
+        getCount: () => number;
+        handleRemoveItem: (id: string) => void;
+    };
 
-	render() {
-		if (!this.basketList || !this.basketPrice) return;
-		this.basketList.innerHTML = '';
-		this.cart.getItems().forEach((product: Product, index) => {
-			const li = document.createElement('li');
-			li.className = 'basket__item card card_compact';
-			li.innerHTML = `
-        <span class="basket__item-index">${index + 1}</span>
-        <span class="card__title">${product.title}</span>
-        <span class="card__price">${product.price} синапсов</span>
-        <button class="basket__item-delete card__button" aria-label="удалить"></button>
-      `;
-			const deleteBtn = li.querySelector('.basket__item-delete') as HTMLElement;
-			deleteBtn.addEventListener('click', () => {
-				this.cart.removeItem(product.id);
-				this.render();
-				this.updateCounter();
-				this.showBasketNotify('Товар удалён из корзины');
-			});
-			this.basketList.appendChild(li);
-		});
-		this.basketPrice.textContent = `${this.cart.getTotal()} синапсов`;
+    private basketCounter: HTMLElement;
+    private modalView: ModalView;
+    private basketTemplate: HTMLTemplateElement;
 
-		const orderBtn = this.basketModal.querySelector(
-			'#open-order-btn'
-		) as HTMLButtonElement;
-		if (orderBtn) {
-			orderBtn.disabled = this.cart.getCount() === 0;
-			orderBtn.onclick = () => {
-				if (this.cart.getCount() === 0) return;
-				this.openOrderStep1();
-			};
-		}
-		this.updateCounter();
-	}
+    constructor(
+        private root: HTMLElement,
+        private showBasketNotify: (message: string) => void,
+        private openOrderStep1: () => void
+    ) {
+        this.basketCounter = this.root.querySelector('.header__basket-counter') as HTMLElement;
+        this.modalView = new ModalView('#modal-container');
+        this.basketTemplate = document.getElementById('basket') as HTMLTemplateElement;
+    }
 
-	updateCounter() {
-		if (!this.basketCounter) return;
-		this.basketCounter.textContent = this.cart.getCount().toString();
-	}
+    setPresenter(presenter: {
+        getItems: () => Product[];
+        getTotal: () => number;
+        getCount: () => number;
+        handleRemoveItem: (id: string) => void;
+    }) {
+        this.presenter = presenter;
+    }
 
-	openBasketModal() {
-		this.render();
-		this.modalManager.open('basket');
-		document.body.classList.add('page_fixed');
-	}
+    renderBasketContent(): HTMLElement {
+        const basketContent = this.basketTemplate.content.cloneNode(true) as HTMLElement;
+        const basketList = basketContent.querySelector('.basket__list') as HTMLElement;
+        const basketPrice = basketContent.querySelector('.basket__price') as HTMLElement;
+        const orderBtn = basketContent.querySelector('.basket__button') as HTMLButtonElement;
+
+        basketList.innerHTML = '';
+        this.presenter.getItems().forEach((product: Product, index: number) => {
+            const li = BasketItemView.create(product, index, () => {
+                this.presenter.handleRemoveItem(product.id);
+                this.showBasketNotify('Товар удалён из корзины');
+            });
+            basketList.appendChild(li);
+        });
+        basketPrice.textContent = `${this.presenter.getTotal()} синапсов`;
+
+        if (orderBtn) {
+            orderBtn.disabled = this.presenter.getCount() === 0;
+            orderBtn.onclick = () => {
+                if (this.presenter.getCount() === 0) return;
+                this.openOrderStep1();
+            };
+        }
+
+        return basketContent;
+    }
+
+    updateCounter() {
+        if (this.basketCounter) {
+            this.basketCounter.textContent = this.presenter.getCount().toString();
+        }
+    }
+
+    openBasketModal() {
+        const basketContent = this.renderBasketContent();
+        this.modalView.setContent(basketContent);
+        this.modalView.open();
+        this.updateCounter();
+    }
+
+    update() {
+        this.openBasketModal();
+        this.updateCounter();
+    }
+
+    public render() {
+        this.updateCounter();
+    }
 }

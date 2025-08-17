@@ -1,16 +1,27 @@
-import { Api } from '../components/base/api';
 import { Product } from '../types';
 
 export class Catalog {
-	constructor(protected api: Api) {}
+    private products: Product[] = [];
+    private updateListeners: (() => void)[] = [];
 
-	// Получить все товары (массив)
-	async getProducts(): Promise<Product[]> {
-		return await this.api.getProducts();
-	}
+    setProducts(products: Product[]) {
+        this.products = products;
+        this.emitUpdate();
+    }
 
-	// Получить один товар по id
-	async getProduct(id: string): Promise<Product> {
-		return this.api.get<Product>(`/product/${id}`);
-	}
+    getProducts(): Product[] {
+        return this.products;
+    }
+
+    getProduct(id: string): Product | undefined {
+        return this.products.find((p) => p.id === id);
+    }
+
+    onUpdate(listener: () => void) {
+        this.updateListeners.push(listener);
+    }
+
+    private emitUpdate() {
+        this.updateListeners.forEach((fn) => fn());
+    }
 }
