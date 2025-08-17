@@ -1,20 +1,33 @@
+// --- Стили ---
 import './scss/styles.scss';
-import { Api } from './components/base/api';
-import { LarekApi } from './components/base/LarekApi';
-import { Catalog } from './models/catalog';
-import { Product } from './types';
-import { ModalView } from './components/ModalView';
-import { Cart } from './models/cart';
-import { ErrorView } from './components/ErrorView';
+
+// --- Константы ---
 import { API_URL, CDN_URL } from './utils/constants';
-import { FormModel } from './models/FormModel';
-import { ProductListView } from './components/ProductListView';
-import { CartView } from './components/CartView';
-import { CartPresenter } from './components/CartPresenter';
-import { OrderFormView } from './components/OrderFormView';
-import { ContactFormView } from './components/ContactFormView';
-import { OrderPresenter } from './components/OrderPresenter';
-import { SuccessModalView } from './components/SuccessModalView';
+
+// --- Типы данных ---
+import { Product } from './types';
+
+// --- Базовые сервисы и API ---
+import { Api } from './components/base/api';           // Базовый API для сетевых запросов
+import { LarekApi } from './components/base/LarekApi'; // Специализированный API для работы с товарами
+
+// --- Модели ---
+import { Catalog } from './models/catalog';             // Модель каталога товаров
+import { Cart } from './models/cart';                   // Модель корзины
+import { FormModel } from './models/FormModel';         // Модель формы заказа
+
+// --- Представления ---
+import { ModalView } from './components/ModalView';             // Модальное окно
+import { ErrorView } from './components/ErrorView';             // Модальное окно ошибок
+import { ProductListView } from './components/ProductListView'; // Список товаров
+import { CartView } from './components/CartView';               // Корзина
+import { OrderFormView } from './components/OrderFormView';     // Форма заказа
+import { ContactFormView } from './components/ContactFormView'; // Форма контактов
+import { SuccessModalView } from './components/SuccessModalView'; // Модальное окно успешного заказа
+
+// --- Презентеры ---
+import { CartPresenter } from './components/CartPresenter';     // Презентер корзины
+import { OrderPresenter } from './components/OrderPresenter';   // Презентер заказа
 
 // --- Инициализация моделей и API ---
 const api = new Api(CDN_URL, API_URL);
