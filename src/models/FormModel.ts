@@ -43,7 +43,7 @@ export class FormModel {
 
 	validateContacts() {
 		const regexpEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-		const regexpPhone = /^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{10}$/;
+		const regexpPhone = /^[\d\-\+\(\) ]{7,20}$/;
 		const errors: FormErrors = {};
 
 		if (!this.email) {
