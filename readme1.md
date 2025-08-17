@@ -65,7 +65,7 @@ interface Product {
   category: string;
 }
 ```
-*Типы описаны в [`src/types.ts`](src/types.ts).*
+*Типы описаны в [`src/types/index.ts`](src/types/index.ts).*
 
 ---
 
