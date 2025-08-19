@@ -1,49 +1,55 @@
-import { Product } from '../types';
+import { Product } from '../../types';
 import { ModalView } from './ModalView';
 import { BasketItemView } from './BasketItemView';
+import { EventEmitter } from '../base/events';
+
+export interface ICartPresenter {
+    getItems: () => Product[];
+    getTotal: () => number;
+    getCount: () => number;
+    handleRemoveItem: (id: string) => void;
+}
 
 export class CartView {
-    private presenter!: {
-        getItems: () => Product[];
-        getTotal: () => number;
-        getCount: () => number;
-        handleRemoveItem: (id: string) => void;
-    };
-
+    private presenter!: ICartPresenter;
     private basketCounter: HTMLElement;
-    private modalView: ModalView;
     private basketTemplate: HTMLTemplateElement;
+    private emitter: EventEmitter;
 
     constructor(
         private root: HTMLElement,
-        private showBasketNotify: (message: string) => void,
-        private openOrderStep1: () => void
+        private openOrderStep1: () => void,
+        private modalView: ModalView,
+        emitter: EventEmitter
     ) {
         this.basketCounter = this.root.querySelector('.header__basket-counter') as HTMLElement;
-        this.modalView = new ModalView('#modal-container');
+        // Исправлено: ищем темплейт глобально
         this.basketTemplate = document.getElementById('basket') as HTMLTemplateElement;
+        this.emitter = emitter;
+
+        this.emitter.on('basket:open', () => this.openBasketModal());
+        this.emitter.on('cart:changed', () => this.updateCounter());
     }
 
-    setPresenter(presenter: {
-        getItems: () => Product[];
-        getTotal: () => number;
-        getCount: () => number;
-        handleRemoveItem: (id: string) => void;
-    }) {
+    setPresenter(presenter: ICartPresenter) {
         this.presenter = presenter;
     }
 
     renderBasketContent(): HTMLElement {
-        const basketContent = this.basketTemplate.content.cloneNode(true) as HTMLElement;
-        const basketList = basketContent.querySelector('.basket__list') as HTMLElement;
-        const basketPrice = basketContent.querySelector('.basket__price') as HTMLElement;
-        const orderBtn = basketContent.querySelector('.basket__button') as HTMLButtonElement;
+        const fragment = this.basketTemplate.content.cloneNode(true);
+        const container = document.createElement('div');
+        container.appendChild(fragment);
+
+        const basketList = container.querySelector('.basket__list') as HTMLElement;
+        const basketPrice = container.querySelector('.basket__price') as HTMLElement;
+        const orderBtn = container.querySelector('.basket__button') as HTMLButtonElement;
 
         basketList.innerHTML = '';
         this.presenter.getItems().forEach((product: Product, index: number) => {
             const li = BasketItemView.create(product, index, () => {
                 this.presenter.handleRemoveItem(product.id);
-                this.showBasketNotify('Товар удалён из корзины');
+                this.openBasketModal();
+                this.emitter.emit('basket:item:removed', { productId: product.id });
             });
             basketList.appendChild(li);
         });
@@ -57,11 +63,11 @@ export class CartView {
             };
         }
 
-        return basketContent;
+        return container;
     }
 
     updateCounter() {
-        if (this.basketCounter) {
+        if (this.basketCounter && this.presenter) {
             this.basketCounter.textContent = this.presenter.getCount().toString();
         }
     }

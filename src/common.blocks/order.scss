@@ -1,70 +1,21 @@
-@use 'variables' as *;
-@use 'mixins';
+@use "variables" as *;
+@use "mixins";
 
 .order {
-	@include mixins.flex(column);
-	font-weight: 400;
-	font-size: 30px;
-	margin: 48px 158px 48px 48px;
-	min-height: 834px;
-	justify-content: space-between;
+  margin: 96px 158px 96px 48px;
+  font: 400 30px/100% 'YS Text', Arial, sans-serif;
 
-	&__buttons {
-		display: flex;
-		align-items: center;
-		gap: 3rem;
-		bottom: 0px;
-		margin-top: 207px;
-	}
+  @include mixins.flex(column);
+  gap: 4rem;
+  margin-bottom: 4rem;
 
-	&__field {
-		@include mixins.flex(column);
-		gap: 1rem;
+  &__field {
+    @include mixins.flex(column);
+    gap: 1.5rem;
+  }
 
-		input,
-		select {
-			margin-top: 0.7rem;
-			padding: 1.3rem 1.5rem;
-			border-radius: 1.5rem;
-			border: $defaultBorder;
-			background: $primaryLight;
-			color: $secondary;
-			width: 100%;
-			box-sizing: border-box;
-			outline: none;
-			transition: border-color 0.2s;
-		}
-		input:focus,
-		select:focus {
-			border-color: $primary;
-		}
-	}
-
-	&__payment {
-		display: flex;
-		gap: 10px;
-		margin-bottom: 2rem;
-	}
-
-	&__payment-btn {
-		width: 316px;
-		height: 75px;
-		border-radius: 20px;
-		border: $defaultBorder;
-		background: $primaryLight;
-		color: $secondary;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 10px;
-		cursor: pointer;
-		transition: border-color 0.2s, box-shadow 0.2s;
-
-		&.order__payment-btn_active {
-			border: $hoverBorder;
-			background: $primaryLight;
-			color: $secondary;
-			box-shadow: none;
-		}
-	}
+  &__buttons {
+    @include mixins.flex(row);
+    gap: 1.5rem;
+  }
 }

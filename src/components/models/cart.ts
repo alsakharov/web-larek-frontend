@@ -1,4 +1,4 @@
-import { Product } from '../types';
+import { Product } from '../../types';
 
 export class Cart {
     private items: Product[] = [];
@@ -21,7 +21,7 @@ export class Cart {
     }
 
     getTotal(): number {
-        return this.items.reduce((sum, item) => sum + item.price, 0);
+        return this.items.reduce((sum, item) => sum + (item.price ?? 0), 0);
     }
 
     getCount(): number {
@@ -31,6 +31,10 @@ export class Cart {
     clear() {
         this.items = [];
         this.emitUpdate();
+    }
+
+    hasProduct(productId: string): boolean {
+        return this.items.some(item => item.id === productId);
     }
 
     onUpdate(listener: () => void) {

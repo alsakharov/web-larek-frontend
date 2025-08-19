@@ -1,7 +1,6 @@
-@use 'variables' as *;
+@use "variables" as *;
 
-html,
-body.page {
+html, body.page {
 	height: 100%;
 	font-family: $font;
 	font-size: $baseFontSize;
@@ -16,9 +15,6 @@ body.page {
 		position: fixed;
 	}
 }
-
 .page_fixed {
-	overflow: hidden;
-	position: fixed;
-	width: 100vw;
+    overflow: hidden;
 }

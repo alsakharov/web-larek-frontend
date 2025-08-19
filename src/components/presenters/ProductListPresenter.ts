@@ -1,7 +1,7 @@
 import { Catalog } from '../models/catalog';
-import { ProductListView } from './ProductListView';
-import { LarekApi } from './base/LarekApi';
-import { Product } from '../types';
+import { ProductListView } from '../views/ProductListView';
+import { LarekApi } from '../base/LarekApi';
+import { Product } from '../../types';
 
 export class ProductListPresenter {
     constructor(
@@ -16,7 +16,7 @@ export class ProductListPresenter {
     async fetchAndRender() {
         const products: Product[] = await this.api.getProducts(); // запрос к серверу
         this.catalog.setProducts(products); // сохраняем в модель
-        // emitUpdate вызовет this.render() через onUpdate
+        // onUpdate вызовет this.render()
     }
 
     render() {
