@@ -55,7 +55,7 @@ const productListView = new ProductListView(gallery, cardTemplate, CDN_URL, emit
 const cartView = new CartView(cartRoot, () => orderFormView.open(), modalView, emitter);
 const successModalView = new SuccessModalView(modalView, () => cartView.updateCounter(), emitter);
 
-// --- Презентеры ---
+// --- Инициализация презентеров и View-компонентов ---
 const contactFormPresenter = createContactFormPresenter(formModel, cart, larekApi);
 const contactFormView = new ContactFormView(
     modalView,
